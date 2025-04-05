@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive File | SecureShare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6e8efb;
+            --secondary-color: #611db9;
+            --accent-color: #ff6a00;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(26, 26, 46, 0.85);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, #ddd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .description {
+            font-size: 1.1em;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .code-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .code-input input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .code-input input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 106, 0, 0.2);
+        }
+        
+        .btn {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #ff4500;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn i {
+            font-size: 1.2em;
+        }
+        
+        .qr-option {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .qr-option a {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .qr-option a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .code-input input {
+                width: 40px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-file-download"></i> Receive File</h1>
+        <p class="description">Enter the 6-digit code provided by the sender</p>
+        
+        <form action="{{ url_for('enter_code') }}" method="post">
+            <div class="code-input">
+                <input type="text" name="code1" maxlength="1" pattern="\d" required>
+                <input type="text" name="code2" maxlength="1" pattern="\d" required>
+                <input type="text" name="code3" maxlength="1" pattern="\d" required>
+                <input type="text" name="code4" maxlength="1" pattern="\d" required>
+                <input type="text" name="code5" maxlength="1" pattern="\d" required>
+                <input type="text" name="code6" maxlength="1" pattern="\d" required>
+                <input type="hidden" name="code" id="fullCode">
+            </div>
+            
+            <button type="submit" class="btn">
+                <i class="fas fa-check"></i> Verify Code
+            </button>
+        </form>
+        
+        <div class="qr-option">
+            <p>Alternatively, scan a QR code</p>
+            <a href="#">
+                <i class="fas fa-qrcode"></i> Scan QR Code
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.code-input input');
+            const fullCodeInput = document.getElementById('fullCode');
+            
+            // Focus first input on load
+            inputs[0].focus();
+            
+            // Handle input navigation
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    if (this.value.length === 1) {
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value.length === 0) {
+                        if (index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                    }
+                });
+            });
+            
+            // Combine all inputs into full code before submission
+            document.querySelector('form').addEventListener('submit', function(e) {
+                let fullCode = '';
+                inputs.forEach(input => {
+                    fullCode += input.value;
+                });
+                fullCodeInput.value = fullCode;
+            });
+        });
+    </script>
+</body>
+</html>

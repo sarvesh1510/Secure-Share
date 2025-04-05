@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download File | SecureShare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6e8efb;
+            --secondary-color: #611db9;
+            --accent-color: #ff6a00;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(26, 26, 46, 0.85);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .file-icon {
+            font-size: 4rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #ddd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .file-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .file-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .file-detail:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .file-detail-label {
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .btn {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #ff4500;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn i {
+            font-size: 1.2em;
+        }
+        
+        .security-note {
+            margin-top: 2rem;
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="file-icon">
+            <i class="fas fa-file-download"></i>
+        </div>
+        <h1>File Ready to Download</h1>
+        
+        <div class="file-info">
+            <div class="file-detail">
+                <span class="file-detail-label">File Name:</span>
+                <span id="fileName">{{ filename.split('.', 1)[1] if '.' in filename else filename }}</span>
+            </div>
+            <div class="file-detail">
+                <span class="file-detail-label">Access Code:</span>
+                <span>{{ file_code }}</span>
+            </div>
+            <div class="file-detail">
+                <span class="file-detail-label">Expires:</span>
+                <span id="expiryTime">24 hours after upload</span>
+            </div>
+        </div>
+        
+        <a href="{{ url_for('serve_file', file_code=file_code) }}" class="btn">
+            <i class="fas fa-download"></i> Download Now
+        </a>
+        
+        <p class="security-note">
+            <i class="fas fa-shield-alt"></i> This file was transferred securely
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation for download button
+            const downloadBtn = document.querySelector('.btn');
+            setTimeout(() => {
+                downloadBtn.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    downloadBtn.style.transform = 'scale(1)';
+                }, 300);
+            }, 500);
+            
+            // Extract and display file extension
+            const fileName = document.getElementById('fileName').textContent;
+            const fileExtension = fileName.split('.').pop().toUpperCase();
+            document.getElementById('fileName').textContent = `${fileName} (.${fileExtension})`;
+        });
+    </script>
+</body>
+</html>
