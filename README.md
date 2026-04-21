@@ -1,7 +1,7 @@
 #  Secure Share File Sharing App with QR Code and Expiry
 
 This project is a Flask-based secure file sharing web application that allows users to upload files, generate a unique access code, and download them via a secure link or QR code. Files are stored temporarily and automatically expire after 24 hours.
-https://secure-share-0wf7.onrender.com/
+
 ## Features
 
 -  Upload files with unique access codes
